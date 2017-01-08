@@ -79,28 +79,23 @@ class MainWindow(wx.Frame):
         return credentials
 
     def OnCheck(self,e):
-        #changed = self.control.IsChecked(0)
         newCheckedEpisodes = list(self.control.GetCheckedStrings())
-
-        #print(self.checkedEpisodes)
 
         for episode in self.listOfEpisodes:
             sid = self.client.get_show_id(episode)
             viewedEpisodes = self.client.checked_episodes(sid).keys()
             if episode in newCheckedEpisodes and episode not in self.checkedEpisodes:
-                if episode not in viewedEpisodes:
-                    episodeId = self.client.find_episode(episode)
-                    self.client.check_episode(episodeId)
+                #if episode not in viewedEpisodes:
+                episodeId = self.client.find_episode(episode)
+                self.client.check_episode(episodeId)
                 # Check this episode
             elif episode not in newCheckedEpisodes and episode in self.checkedEpisodes:
-                if episode in viewedEpisodes:
-                    episodeId = self.client.find_episode(episode)
-                    self.client.uncheck_episode(episodeId)
+                #if episode in viewedEpisodes:
+                episodeId = self.client.find_episode(episode)
+                self.client.uncheck_episode(episodeId)
                 # Uncheck this episode
 
         self.checkedEpisodes = newCheckedEpisodes
-
-        #print(newCheckedEpisodes)
 
     def OnAbout(self,e):
         dlg = wx.MessageDialog(self, " MyShows offline tool for desktop \n in wxPython", "About this app", wx.OK)
