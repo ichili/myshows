@@ -1,0 +1,7 @@
+*.pyc
+settings.txt
+log.txt
+notifu/notifu.exe
+notifu/notifu.pdb
+*.sublime-project
+*.sublime-workspace
