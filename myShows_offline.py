@@ -89,11 +89,13 @@ class MainWindow(wx.Frame):
             viewedEpisodes = self.client.checked_episodes(sid).keys()
             if episode in newCheckedEpisodes and episode not in self.checkedEpisodes:
                 if episode not in viewedEpisodes:
-                    self.client.check_episode(episode)
+                    episodeId = self.client.find_episode(episode)
+                    self.client.check_episode(episodeId)
                 # Check this episode
             elif episode not in newCheckedEpisodes and episode in self.checkedEpisodes:
                 if episode in viewedEpisodes:
-                    self.client.uncheck_episode(episode)
+                    episodeId = self.client.find_episode(episode)
+                    self.client.uncheck_episode(episodeId)
                 # Uncheck this episode
 
         self.checkedEpisodes = newCheckedEpisodes
