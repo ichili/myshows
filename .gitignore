@@ -5,3 +5,4 @@ notifu/notifu.exe
 notifu/notifu.pdb
 *.sublime-project
 *.sublime-workspace
+settings.txt
