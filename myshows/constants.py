@@ -1,0 +1,13 @@
+API_HOST = "http://api.myshows.ru/"
+PROFILE = "profile/"
+LOGIN = PROFILE + "login"
+SHOWS = "shows/"
+USER_SHOWS = PROFILE + SHOWS
+SEARCH = SHOWS + "search/"
+SEARCH_FILENAME = SEARCH + "file/"
+GENRES = "genres"
+EPISODES = "episodes/"
+CHECK_EPISODE = PROFILE + EPISODES + "check/"
+UNCHECK_EPISODE = PROFILE + EPISODES + "uncheck/"
+UNWATCHED = PROFILE + EPISODES + "unwatched/"
+NEXT = PROFILE + EPISODES + "next/"
