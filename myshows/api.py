@@ -46,9 +46,6 @@ class Session:
 		url = API_HOST + USER_SHOWS
 		return self.__request(url)
 
-	def watched_episodes(self, show_id):
-		pass
-
 	def __set_episode_status(self, id, status, rating=None):
 		params = {}
 
@@ -102,9 +99,8 @@ class Session:
 		params = {'q': filename}
 		return self.__request(url, params=params)
 
-	def full_show_info(self, id):
-		url = API_HOST + USER_SHOWS + str(id) +'/'
-		print(url)
+	def checked_episodes(self, show_id):
+		url = API_HOST + USER_SHOWS + str(show_id) +'/'
 		return self.__request(url)
 
 	def episode_info(self, id):

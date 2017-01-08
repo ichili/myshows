@@ -40,12 +40,15 @@ def main():
 		notify_str = []
 		for x in sys.argv[1:]:
 			fname = ntpath.basename(x)
+			sid = client.get_show_id(fname)
+			print(client.checked_episodes(sid).keys())
+			
 			episode = client.find_episode(fname)
 			if episode:
 				client.check_episode(episode)
 				showid = client.test(episode)['showId']
-				print(showid)
-				print (json.dumps(client.full_show_info(showid), indent=4, sort_keys=True))
+				#print(showid)
+				#print (json.dumps(client.full_show_info(showid), indent=4, sort_keys=True))
 				#print(client.full_show_info(showid))
 				notify_str.append('Episode {} checked\n'.format(fname))
 			else:

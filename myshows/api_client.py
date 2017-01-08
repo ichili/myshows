@@ -23,11 +23,7 @@ class MyShowsClient:
 			episode = self.search_filename(filename)
 		except:
 			try:
-				info = self.guess(filename)
-				show_title = info['title']
-				show = self.api.search(show_title)
-				print(show)
-				show_id = int(list(show.keys())[0])
+				show_id = _get_show_id(filename)
 				show_info = self.api.full_show_info(show_id)
 				for k, v in show_info['episodes'].items():
 					if v['seasonNumber'] == info['season'] and v['episodeNumber'] == info['episode']:
@@ -39,6 +35,12 @@ class MyShowsClient:
 				return None
 		return episode
 
+	def _get_show_id(self, filename):
+		info = self.guess(filename)
+		show_title = info['title']
+		show = self.api.search(show_title)
+		show_id = int(list(show.keys())[0])
+		return show_id
 
 	def search_filename(self, filename):
 		info = self.api.search_filename(filename)
@@ -49,13 +51,17 @@ class MyShowsClient:
 		return self.api.search(name)
 
 	def test(self, show_id):
-		show_info = self.api.episode_info(show_id)
-		return show_info	
-
+		return self.api.episode_info(show_id)
+		
 	def full_show_info(self, show_id):
-		show_info = self.api.full_show_info(show_id)
-		return show_info	
+		return self.api.full_show_info(show_id)
 	
+	def checked_episodes(self, show_id):
+		return self.api.checked_episodes(show_id)
+
+	def get_show_id(self, filename):
+		return self._get_show_id(filename)
+
 	@staticmethod
 	def guess(filename):
 		return dict(guessit(filename))
