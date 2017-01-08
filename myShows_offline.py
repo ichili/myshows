@@ -19,7 +19,10 @@ class MainWindow(wx.Frame):
         self.listOfEpisodes, self.checkedEpisodes = self.LoadEpisodes()
 
         wx.Frame.__init__(self, parent, title=title, size=(320,400))
+
         self.control = wx.CheckListBox(self, choices=self.listOfEpisodes, style=wx.LB_SINGLE)
+        self.control.SetCheckedStrings(self.checkedEpisodes)
+
         self.CreateStatusBar()
 
         filemenu= wx.Menu()
@@ -30,29 +33,35 @@ class MainWindow(wx.Frame):
         menuPath = settingsmenu.Append(wx.ID_OPEN, "&Path"," Edit the path to your episodes")
 
         menuBar = wx.MenuBar()
-        menuBar.Append(filemenu,"&File") # Adding the "filemenu" to the MenuBar
+        menuBar.Append(filemenu,"&File")
         menuBar.Append(settingsmenu,"&Settings")
-        self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
+        self.SetMenuBar(menuBar)
 
         # Events.
         self.Bind(wx.EVT_MENU, self.OnPath, menuPath)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
+        self.Bind(wx.EVT_CHECKLISTBOX, self.OnCheck, self.control)
 
         self.Show()
 
     def LoadEpisodes(self):
         episodes = []
-        echeckedEpisodes = []
+        checkedEpisodes = []
+
         for self.dirname, dirnames, filenames in os.walk(self.dirname):
             for filename in filenames:
                 episode = self.client.find_episode(filename)
                 if episode:
                     episodes.append(filename)
-
+                    sid = self.client.get_show_id(filename)
+                    viewedEpisodes = self.client.checked_episodes(sid).keys()
+                    if episode in viewedEpisodes:
+                        checkedEpisodes.append(filename)
+                    
         '''
-        for filename in os.listdir(self.dirname):
-            episodes.append(filename)
+        for filename in os.listdir(self.dirname):  <-- looks only at files in dirname,
+            episodes.append(filename)                  not subdirs
         '''
 
         return episodes, checkedEpisodes
@@ -69,23 +78,44 @@ class MainWindow(wx.Frame):
             credentials[x] = y
         return credentials
 
+    def OnCheck(self,e):
+        #changed = self.control.IsChecked(0)
+        newCheckedEpisodes = list(self.control.GetCheckedStrings())
+
+        #print(self.checkedEpisodes)
+
+        for episode in self.listOfEpisodes:
+            sid = self.client.get_show_id(episode)
+            viewedEpisodes = self.client.checked_episodes(sid).keys()
+            if episode in newCheckedEpisodes and episode not in self.checkedEpisodes:
+                if episode not in viewedEpisodes:
+                    self.client.check_episode(episode)
+                # Check this episode
+            elif episode not in newCheckedEpisodes and episode in self.checkedEpisodes:
+                if episode in viewedEpisodes:
+                    self.client.uncheck_episode(episode)
+                # Uncheck this episode
+
+        self.checkedEpisodes = newCheckedEpisodes
+
+        #print(newCheckedEpisodes)
+
     def OnAbout(self,e):
-        # Create a message dialog box
         dlg = wx.MessageDialog(self, " MyShows offline tool for desktop \n in wxPython", "About this app", wx.OK)
-        dlg.ShowModal() # Shows it
-        dlg.Destroy() # finally destroy it when finished.
+        dlg.ShowModal()
+        dlg.Destroy()
 
     def OnExit(self,e):
-        self.Close(True)  # Close the frame.
+        self.Close(True)
 
     def OnPath(self,e):
-        """ Choose the path"""
         dlg = wx.DirDialog(self, "Choose a path", self.dirname)
         if dlg.ShowModal() == wx.ID_OK:
             self.dirname = dlg.GetPath()
             self.listOfEpisodes, self.checkedEpisodes = self.LoadEpisodes()
             self.control.Clear()
             self.control.InsertItems(self.listOfEpisodes, 0)
+            self.control.SetCheckedItems(self.checkedEpisodes)
             # TODO
         dlg.Destroy()
 
