@@ -4,7 +4,7 @@ from datetime import datetime
 from myshows.api_client import MyShowsClient
 from myshows.exceptions import *
 from notifu import notify
-import json
+
 
 log_path = 'log.txt'
 
@@ -29,27 +29,16 @@ def read_setting():
 	
 
 def main():
-	log("main")
 	try:
-		log("read")
 		credentials = read_setting()
 		client = MyShowsClient(credentials['login'], credentials['password']) 
-		log("try_login")
 		client.login()
-		log("success")
 		notify_str = []
 		for x in sys.argv[1:]:
 			fname = ntpath.basename(x)
-			sid = client.get_show_id(fname)
-			print(client.checked_episodes(sid).keys())
-			
 			episode = client.find_episode(fname)
 			if episode:
 				client.check_episode(episode)
-				showid = client.test(episode)['showId']
-				#print(showid)
-				#print (json.dumps(client.full_show_info(showid), indent=4, sort_keys=True))
-				#print(client.full_show_info(showid))
 				notify_str.append('Episode {} checked\n'.format(fname))
 			else:
 				notify_str.append('Can\'t find episode {}\n'.format(fname))
@@ -58,7 +47,5 @@ def main():
 		log(e)
 		notify(e)
 
-
 if __name__ == '__main__':
 	main()
-	input()

@@ -184,7 +184,6 @@ class Session:
 			Returns information about given episode
 		'''
 		url = EPISODES + str(id)
-		print(url)
 		return self.__request(url)
 
 	#TODO Список жанров
